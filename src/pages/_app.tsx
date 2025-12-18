@@ -21,9 +21,9 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   // 3. Add logic for any public pages (like a login page)
-  // if (path === '/login') {
-  //   return <Component {...pageProps} />;
-  // }
+  if (path === '/') {
+    return <Component {...pageProps} />;
+  }
 
   // 4. Default to the AdminLayout for all other pages
   return (

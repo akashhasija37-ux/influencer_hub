@@ -1,18 +1,13 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
-// This creates a single, global instance of the Prisma Client.
-// This prevents your app from creating too many connections to the database.
-
-declare global {
-  // allow global `var` declarations
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma =
-  global.prisma ||
+  globalForPrisma.prisma ||
   new PrismaClient({
-    log: ['query'], // Optional: Logs all queries to the console
+    log: ["query"],
   });
 
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+export default prisma;

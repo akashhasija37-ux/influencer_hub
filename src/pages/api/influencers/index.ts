@@ -1,30 +1,29 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/lib/prisma';
+import type { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // We only want to handle GET requests for this endpoint
-  if (req.method === 'GET') {
-    try {
-      // 1. Get all influencers from the database
-      const influencers = await prisma.influencer.findMany({
-        // Optional: sort them by name
-        orderBy: {
-          name: 'asc',
-        },
-      });
+  const { username } = req.query;
 
-      // 2. Send the data back as JSON
-      res.status(200).json(influencers);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error fetching influencers' });
-    }
-  } else {
-    // Handle any other HTTP method
-    res.setHeader('Allow', ['GET']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+  if (!username) {
+    return res.status(400).json({ error: "Username required" });
   }
+
+  const cleanUsername = String(username).replace("@", "").toLowerCase();
+
+  const influencer = await prisma.influencer.findUnique({
+    where: { username: cleanUsername },
+  });
+
+  if (influencer) {
+    return res.json(influencer);
+  }
+
+  // First-time user → OAuth
+  return res.json({
+    requiresAuth: true,
+    authUrl: `/api/influencers/oauth?username=${cleanUsername}`,
+  });
 }

@@ -1,145 +1,152 @@
-// This tells Prisma how to connect to the DB
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-// This tells Prisma how to generate its client
-generator client {
-  provider = "prisma-client-js"
+//////////////////////
+// ENUMS
+//////////////////////
+
+enum UserRole {
+  ADMIN
+  BRAND
+  INFLUENCER
 }
 
-//
-// APPLICATION MODELS
-//
+enum CampaignStatus {
+  DRAFT
+  PUBLISHED
+}
 
-// Model for Admin users (like "AD" from the screenshot)
+//////////////////////
+// MODELS
+//////////////////////
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  role          UserRole
+  emailVerified Boolean  @default(false)
+  emailOtp       String?
+  emailOtpExpiry DateTime?
+  createdAt     DateTime @default(now())
+
+  admin             AdminUser?
+  brand             Brand?
+  influencer        Influencer?
+  
+}
+
+
 model AdminUser {
-  id           String @id @default(cuid())
-  email        String @unique
-  name         String
-  passwordHash String // We will add authentication later
-  paymentEmail String?
-  supportEmail String?
+  id     String @id @default(cuid())
+  name   String
+  userId String @unique
 
-  // Relations: An admin can send many chat messages
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   chatMessages ChatMessage[]
 }
 
-// Model for Influencers (from "Influencer Management" page)
-model Influencer {
-  id           String @id @default(cuid())
-  name         String
-  username     String  @unique
-  platform     String
-  followers    Int
-  engagement   Float
-  lastActive   DateTime @default(now())
-  profileViews Int
-  avatarInitial String? // The '?' means this field is optional
-
-  // Relations: An influencer can have many applications,
-  // one subscription, and many support tickets
-  applications   Application[]
-  subscription   Subscription?
-  supportTickets SupportTicket[]
-}
-
-// Model for Brands (from "Brand Management" page)
 model Brand {
-  id            String @id @default(cuid())
+  id            String  @id @default(cuid())
   name          String
   industry      String
   totalSpend    Float
   avatarInitial String?
+  userId        String  @unique
 
-  // Relations: A brand can have many campaigns,
-  // one subscription, and many support tickets
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   campaigns      Campaign[]
   subscription   Subscription?
   supportTickets SupportTicket[]
 }
 
-// Model for Campaigns (from "Campaigns" page)
+model Influencer {
+  id             Int     @id @default(autoincrement())
+  platform       String
+  username       String  @unique
+  followers      Int     @default(0)
+  mediaCount     Int     @default(0)
+  connected      Boolean @default(false)
+  engagementRate Float?
+  userId         String  @unique
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications   Application[]
+  subscription   Subscription?
+  supportTickets SupportTicket[]
+}
+
 model Campaign {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
+  id           String         @id @default(cuid())
+  title        String
+  description  String
+  niche        String
+  budgetRange  String
+  platforms    String         @db.Text
+  deliverables String
+  deadline     DateTime
+  status       CampaignStatus
+  createdAt    DateTime       @default(now())
+  brandId      String
 
-  // Relation: This campaign belongs to one Brand
-  brandId String
-  brand   Brand  @relation(fields: [brandId], references: [id])
-
-  // Relation: This campaign has many applications from influencers
+  brand        Brand         @relation(fields: [brandId], references: [id])
   applications Application[]
 }
 
-// This is a "join table" that links Influencers and Campaigns
 model Application {
-  id          String   @id @default(cuid())
-  status      String   // e.g., "Pending", "Approved"
-  submittedAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  status       String
+  createdAt    DateTime @default(now())
+  campaignId   String
+  influencerId Int
 
-  // Relation: This application belongs to one Influencer
-  influencerId String
-  influencer   Influencer @relation(fields: [influencerId], references: [id])
-
-  // Relation: This application is for one Campaign
-  campaignId String
   campaign   Campaign   @relation(fields: [campaignId], references: [id])
+  influencer Influencer @relation(fields: [influencerId], references: [id])
 }
 
-// Model for Subscriptions (from "Subscriptions" page)
 model Subscription {
-  id          String   @id @default(cuid())
-  plan        String   // "Free", "Premium", "Pro"
-  status      String   // "Active", "Canceled"
-  amount      Float
-  renewalDate DateTime
+  id           String   @id @default(cuid())
+  plan         String
+  status       String
+  amount       Float
+  renewalDate  DateTime
+  brandId      String?  @unique
+  influencerId Int?     @unique
 
-  // Relation: A subscription belongs to ONE user,
-  // which can be either a Brand or an Influencer.
-  // This is a one-to-one relation.
-  brandId      String?  @unique // '?' means optional
-  brand        Brand?   @relation(fields: [brandId], references: [id])
-  influencerId String?  @unique // '?' means optional
-  influencer   Influencer? @relation(fields: [influencerId], references: [id])
+  brand      Brand?      @relation(fields: [brandId], references: [id])
+  influencer Influencer? @relation(fields: [influencerId], references: [id])
 }
 
-// Model for Support Chat
 model SupportTicket {
-  id        String   @id @default(cuid())
-  subject   String
-  status    String   // "Open", "Pending", "Resolved"
-  createdAt DateTime @default(now())
-
-  // Relation: Who submitted the ticket?
-  influencerId String?
-  influencer   Influencer? @relation(fields: [influencerId], references: [id])
+  id           String   @id @default(cuid())
+  subject      String
+  status       String
+  createdAt    DateTime @default(now())
   brandId      String?
-  brand        Brand?      @relation(fields: [brandId], references: [id])
+  influencerId Int?
 
-  // Relation: A ticket has many messages
-  messages ChatMessage[]
+  brand      Brand?        @relation(fields: [brandId], references: [id])
+  influencer Influencer?   @relation(fields: [influencerId], references: [id])
+  messages   ChatMessage[]
 }
 
 model ChatMessage {
   id        String   @id @default(cuid())
-  text      String   @db.Text // @db.Text allows for very long messages
+  text      String   @db.Text
   createdAt DateTime @default(now())
+  ticketId  String
+  senderId  String
 
-  // Relation: This message belongs to one ticket
-  ticketId String
-  ticket   SupportTicket @relation(fields: [ticketId], references: [id])
-
-  // Relation: Who sent the message?
-  // We'll assume only Admins can send messages for now.
-  senderId String
-  sender   AdminUser @relation(fields: [senderId], references: [id])
+  ticket SupportTicket @relation(fields: [ticketId], references: [id])
+  sender AdminUser     @relation(fields: [senderId], references: [id])
 }
 
-// Model for Settings (from "Settings" page)
-// This table will only ever have one row (one entry)
 model Settings {
   id                  String  @id @default(cuid())
   stripeApiKey        String?
@@ -149,4 +156,3 @@ model Settings {
   notifyOnCampaign    Boolean @default(true)
   notifyWeeklyReports Boolean @default(false)
 }
-

@@ -14,14 +14,14 @@ import { BarChart } from 'recharts'; // Using BarChart from recharts as a placeh
 
 // 2. This is the complete list of nav items
 const navItems = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Influencers', href: '/influencers', icon: Users },
-  { name: 'Brands', href: '/brands', icon: Building },
-  { name: 'Campaigns', href: '/campaigns', icon: Target },
-  { name: 'Subscriptions', href: '/subscriptions', icon: CreditCard },
-  { name: 'Analytics', href: '/analytics', icon: BarChart2 },
-  { name: 'Support Chat', href: '/support-chat', icon: MessageSquare },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+  { name: 'Influencers', href: '/admin/influencers', icon: Users },
+  { name: 'Brands', href: '/admin/brands', icon: Building },
+  { name: 'Campaigns', href: '/admin/campaigns', icon: Target },
+  { name: 'Subscriptions', href: '/admin/subscriptions', icon: CreditCard },
+  { name: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
+  { name: 'Support Chat', href: '/admin/support-chat', icon: MessageSquare },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 export default function Sidebar() {

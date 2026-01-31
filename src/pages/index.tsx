@@ -138,6 +138,7 @@ type AuthUser = {
 const Header = ({ onNavigate }: { onNavigate: (key: string) => void }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [open, setOpen] = useState(false);
   const router = useRouter();
 
   // 🔐 Check auth state (homepage-safe)
@@ -203,49 +204,62 @@ const Header = ({ onNavigate }: { onNavigate: (key: string) => void }) => {
 
           {/* AUTH UI */}
           {!user ? (
-            <>
-              <button
-                onClick={() => router.push("/login")}
-                className="text-sm font-medium hover:text-purple-400 transition"
-              >
-                Login
-              </button>
-              <button
-                onClick={() => router.push("/register")}
-                className="px-4 py-2 bg-purple-600 rounded-lg text-sm font-medium hover:bg-purple-700 transition"
-              >
-                Get Started
-              </button>
-            </>
-          ) : (
-            <div className="relative group">
-              <button className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                  <User size={16} />
-                </div>
-                <span className="text-sm">{user.name}</span>
-              </button>
+  <>
+    <button
+      onClick={() => router.push("/login")}
+      className="text-sm font-medium hover:text-purple-400 transition"
+    >
+      Login
+    </button>
+    <button
+      onClick={() => router.push("/register")}
+      className="px-4 py-2 bg-purple-600 rounded-lg text-sm font-medium hover:bg-purple-700 transition"
+    >
+      Get Started
+    </button>
+  </>
+) : (
+  <div className="relative">
+    <button
+      onClick={() => setOpen(!open)}
+      className="flex items-center gap-2"
+    >
+      <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+        <User size={16} />
+      </div>
+      <span className="text-sm">{user.name}</span>
+    </button>
 
-              {/* Dropdown */}
-              <div className="absolute right-0 mt-2 hidden group-hover:block bg-gray-900 border border-gray-700 rounded-lg w-44">
-                <div className="px-4 py-2 text-xs text-gray-400">
-                  {user.role}
-                </div>
-                <button
-                  onClick={() => router.push("/settings")}
-                  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-800"
-                >
-                  Profile
-                </button>
-                <button
-                  onClick={logout}
-                  className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-800"
-                >
-                  <LogOut size={14} /> Logout
-                </button>
-              </div>
-            </div>
-          )}
+    {open && (
+      <div className="absolute right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg w-44 z-50">
+        <div className="px-4 py-2 text-xs text-gray-400">
+          {user.role}
+        </div>
+
+        <button
+          onClick={() => {
+            setOpen(false);
+            router.push("/settings");
+          }}
+          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-800"
+        >
+          Profile
+        </button>
+
+        <button
+          onClick={() => {
+            setOpen(false);
+            logout();
+          }}
+          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-800"
+        >
+          <LogOut size={14} /> Logout
+        </button>
+      </div>
+    )}
+  </div>
+)}
+
         </div>
       </div>
     </header>

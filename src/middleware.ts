@@ -16,7 +16,8 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/404") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||   // ✅ REQUIRED
-    pathname.startsWith("/favicon.ico")
+    pathname.startsWith("/favicon.ico") ||
+    pathname.startsWith("/influencer")
   ) {
     return NextResponse.next();
   }
@@ -43,10 +44,11 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/403", req.url));
     }
 
-    // ✅ Dashboard allowed for all logged-in users
-    if (pathname.startsWith("/dashboard")) {
-      return NextResponse.next();
-    }
+    // if (pathname.startsWith("/influencer") && role !== "INFLUENCER") {
+    //   return NextResponse.redirect(new URL("/403", req.url));
+    // }
+    
+
 
     return NextResponse.next();
   } catch (err) {
@@ -59,5 +61,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/brand/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/brand/:path*", "/dashboard/:path* "],
 };

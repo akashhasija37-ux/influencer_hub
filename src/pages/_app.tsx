@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import AdminLayout from '@/components/AdminLayout';
 import BrandLayout from '@/components/BrandLayout';
 
-const PUBLIC_ROUTES = ['/','/register','/login','/403','/404','/verify-email'];
+const PUBLIC_ROUTES = ['/','/register','/login','/403','/404','/verify-email','/influencer/dashboard'];
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();

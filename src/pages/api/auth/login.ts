@@ -72,7 +72,7 @@ res.setHeader(
     let redirectTo = "/";
     if (user.role === "ADMIN") redirectTo = "/admin/dashboard";
     if (user.role === "BRAND") redirectTo = "/brand/dashboard";
-    if (user.role === "INFLUENCER") redirectTo = "/";
+    if (user.role === "INFLUENCER") redirectTo = "/influencer/dashboard";
 
     return res.status(200).json({ success: true, redirectTo });
   } catch (error) {

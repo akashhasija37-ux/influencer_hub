@@ -10,7 +10,7 @@ import {
 
 type Influencer = {
   id: number;
-  name: string;
+  username: string;
   avatarInitial: string;
   platform: string;
   followers: string;

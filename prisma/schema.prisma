@@ -37,16 +37,17 @@ model User {
   email         String   @unique
   passwordHash  String
   role          UserRole
-  emailVerified Boolean  @default(false)
-  emailOtp       String?
+  isVerified    Boolean  @default(false)
+  verifyToken   String?  @unique
+  emailOtp      String?
   emailOtpExpiry DateTime?
   createdAt     DateTime @default(now())
-
   admin             AdminUser?
   brand             Brand?
   influencer        Influencer?
   
 }
+
 
 
 model AdminUser {

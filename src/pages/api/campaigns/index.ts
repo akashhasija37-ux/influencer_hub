@@ -18,13 +18,16 @@ export default async function handler(
       // 2. Create the new campaign in the database
       const newCampaign = await prisma.campaign.create({
         data: {
-          name: data.campaignTitle,
-          brandId: hardcodedBrandId,
-          // We'd add other fields here like:
-          // description: data.description,
-          // budget: data.budget,
-          // etc.
-        },
+    title: data.campaignTitle,
+    description: data.description,
+    niche: data.niche,
+    budgetRange: data.budgetRange,
+    platforms: data.platforms, // e.g. ["INSTAGRAM"]
+    deliverables: data.deliverables,
+    deadline: new Date(data.deadline),
+    status: "PUBLISHED",
+    brandId: hardcodedBrandId,
+  },
       });
 
       // 3. Send the newly created campaign back

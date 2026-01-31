@@ -22,13 +22,18 @@ export default async function handler(
 
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
-      include: {
-        admin: true,
-        brand: true,
-        influencer: true,
-      },
-    });
+  where: { email },
+  select: {
+    id: true,
+    passwordHash: true,
+    role: true,
+    isVerified: true, // ✅ explicit
+    admin: true,
+    brand: true,
+    influencer: true,
+  },
+});
+
 
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -40,11 +45,12 @@ export default async function handler(
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-  if (!user.emailVerified) {
+ if (!user.isVerified) {
   return res.status(403).json({
     message: "Please verify your email first",
   });
 }
+
 
 
 

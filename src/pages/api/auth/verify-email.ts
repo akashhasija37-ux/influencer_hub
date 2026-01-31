@@ -32,8 +32,9 @@ export default async function handler(
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        emailVerified: true,
-        verifyToken: null,
+      isVerified: true,
+    verifyToken: null,
+    
       },
     });
 

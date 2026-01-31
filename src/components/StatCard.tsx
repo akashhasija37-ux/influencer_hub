@@ -2,10 +2,10 @@ import { ArrowUpRight, ArrowDownRight, LucideIcon } from 'lucide-react';
 
 type StatCardProps = {
   title: string;
-  value: string;
+  value: string | number;
   icon: LucideIcon;
-  change: string;
-  isPositive: boolean;
+ change?: string;       
+  isPositive?: boolean;
 };
 
 export default function StatCard({

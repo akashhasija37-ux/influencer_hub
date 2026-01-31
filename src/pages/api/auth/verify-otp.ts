@@ -28,7 +28,7 @@ export default async function handler(
   await prisma.user.update({
     where: { email },
     data: {
-      emailVerified: true,
+       isVerified: true,
       emailOtp: null,
       emailOtpExpiry: null,
     },

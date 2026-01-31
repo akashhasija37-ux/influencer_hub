@@ -37,7 +37,7 @@ export default async function handler(
         email,
         passwordHash,
         role,
-        emailVerified: false,
+        isVerified: false,
         emailOtp,
         emailOtpExpiry,
       },

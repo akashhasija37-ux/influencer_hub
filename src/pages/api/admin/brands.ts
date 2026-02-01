@@ -25,7 +25,7 @@ export default async function handler(
 
     const brands = await prisma.brand.findMany({
       include: {
-        campaigns: {
+        campaign: {
           select: { id: true },
         },
       },

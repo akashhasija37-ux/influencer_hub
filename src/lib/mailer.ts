@@ -14,7 +14,7 @@ export async function sendVerificationEmail(
   email: string,
   token: string
 ) {
-  const verifyUrl = `http://localhost:3000/verify-email?token=${token}`;
+  const verifyUrl = `https://influencer-hub-eta.vercel.app/verify-email?token=${token}`;
 
   await transporter.sendMail({
     from: `"Influencer Hub" <${process.env.SMTP_USER}>`,

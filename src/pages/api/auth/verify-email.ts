@@ -5,40 +5,45 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "GET") {
+  if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { token } = req.query;
+  const { email, otp } = req.body;
 
-  console.log(token,'000000000000000')
-
-  if (!token || typeof token !== "string") {
-    return res.status(400).json({ message: "Invalid token" });
+  if (!email || !otp) {
+    return res.status(400).json({ message: "Missing email or OTP" });
   }
 
   try {
     const user = await prisma.user.findFirst({
-      where: { verifyToken: token },
-    });
-
-    console.log(user,'111111111111111111111111')
-
-    if (!user) {
-      return res.status(400).json({ message: "Token invalid or expired" });
-    }
-
-    // ✅ Mark email verified
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-      emailVerified: true,
-    verifyToken: null,
-    
+      where: {
+        email,
+        emailOtp: otp,
       },
     });
 
-    return res.status(200).json({ success: true });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (!user.emailOtpExpiry || user.emailOtpExpiry < new Date()) {
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        emailOtp: null,
+        emailOtpExpiry: null,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+    });
   } catch (error) {
     console.error("VERIFY EMAIL ERROR:", error);
     return res.status(500).json({ message: "Server error" });

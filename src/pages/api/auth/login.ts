@@ -21,20 +21,18 @@ export default async function handler(
   }
 
   try {
-    const user = await prisma.user.findUnique({
+   const user = await prisma.user.findUnique({
   where: { email },
   select: {
     id: true,
     passwordHash: true,
     role: true,
-    emailVerified: true, // ✅ correct field
+    emailVerified: true,
     adminUser: true,
     brand: true,
     influencer: true,
   },
 });
-
-
 
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -46,10 +44,8 @@ export default async function handler(
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
- if (!user.emailVerified) {
-  return res.status(403).json({
-    message: "Please verify your email first",
-  });
+if (!user.emailVerified) {
+  return res.status(403).json({ message: "Please verify your email first" });
 }
 
     const token = jwt.sign(

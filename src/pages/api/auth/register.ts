@@ -32,16 +32,16 @@ export default async function handler(
     const emailOtpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     // 👤 Create user
-    const user = await prisma.user.create({
+   const user = await prisma.user.create({
   data: {
     email,
     passwordHash,
-    role: "INFLUENCER",
-    emailVerified: false, // ✅ correct field
+    role,
     emailOtp,
     emailOtpExpiry,
-  }
+  },
 });
+
 
 
     // 🎭 Role-based tables

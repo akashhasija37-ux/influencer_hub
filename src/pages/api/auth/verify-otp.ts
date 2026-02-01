@@ -25,10 +25,10 @@ export default async function handler(
     return res.status(400).json({ message: "OTP expired" });
   }
 
-  await prisma.user.update({
+ await prisma.user.update({
   where: { email },
   data: {
-    emailVerified: true,   // ✅ correct field
+    emailVerified: true,
     emailOtp: null,
     emailOtpExpiry: null,
   },

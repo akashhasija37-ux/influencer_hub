@@ -35,7 +35,7 @@ export default async function handler(
       prisma.influencer.count(),
       prisma.campaign.count({ where: { status: "PUBLISHED" } }),
       prisma.application.count(),
-      prisma.subscription.count({ where: { status: "ACTIVE" } }),
+      prisma.subscription.count({ where: { status: "PUBLISHED" } }),
       prisma.campaign.findMany({
         take: 3,
         orderBy: { createdAt: "desc" },

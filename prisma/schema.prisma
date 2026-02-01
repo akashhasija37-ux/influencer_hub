@@ -7,136 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model adminuser {
-  id          String        @id
-  name        String
-  userId      String        @unique(map: "AdminUser_userId_key")
-  user        user          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "AdminUser_userId_fkey")
-  chatmessage chatmessage[]
-}
-
-model application {
-  id           String     @id
-  status       String
-  influencerId Int
-  campaignId   String
-  createdAt    DateTime   @default(now())
-  campaign     campaign   @relation(fields: [campaignId], references: [id], map: "Application_campaignId_fkey")
-  influencer   influencer @relation(fields: [influencerId], references: [id], map: "Application_influencerId_fkey")
-
-  @@index([campaignId], map: "Application_campaignId_fkey")
-  @@index([influencerId], map: "Application_influencerId_fkey")
-}
-
-model brand {
-  id            String          @id
-  name          String
-  industry      String
-  totalSpend    Float
-  avatarInitial String?
-  userId        String          @unique(map: "Brand_userId_key")
-  user          user            @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Brand_userId_fkey")
-  campaign      campaign[]
-  subscription  subscription?
-  supportticket supportticket[]
-}
-
-model campaign {
-  id           String          @id
-  createdAt    DateTime        @default(now())
-  brandId      String
-  budgetRange  String
-  deadline     DateTime
-  deliverables String
-  description  String
-  niche        String
-  platforms    String          @db.Text
-  status       campaign_status
-  title        String
-  application  application[]
-  brand        brand           @relation(fields: [brandId], references: [id], map: "Campaign_brandId_fkey")
-
-  @@index([brandId], map: "Campaign_brandId_fkey")
-}
-
-model chatmessage {
-  id            String        @id
-  text          String        @db.Text
-  createdAt     DateTime      @default(now())
-  ticketId      String
-  senderId      String
-  adminuser     adminuser     @relation(fields: [senderId], references: [id], map: "ChatMessage_senderId_fkey")
-  supportticket supportticket @relation(fields: [ticketId], references: [id], map: "ChatMessage_ticketId_fkey")
-
-  @@index([senderId], map: "ChatMessage_senderId_fkey")
-  @@index([ticketId], map: "ChatMessage_ticketId_fkey")
-}
-
-model influencer {
-  id             Int             @id @default(autoincrement())
-  platform       String
-  username       String          @unique(map: "Influencer_username_key")
-  followers      Int             @default(0)
-  mediaCount     Int             @default(0)
-  connected      Boolean         @default(false)
-  engagementRate Float?
-  userId         String          @unique(map: "Influencer_userId_key")
-  application    application[]
-  user           user            @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Influencer_userId_fkey")
-  subscription   subscription?
-  supportticket  supportticket[]
-}
-
-model settings {
-  id                  String  @id
-  stripeApiKey        String?
-  paypalBusinessEmail String?
-  notifyOnPayment     Boolean @default(true)
-  notifyOnSupport     Boolean @default(true)
-  notifyOnCampaign    Boolean @default(true)
-  notifyWeeklyReports Boolean @default(false)
-}
-
-model subscription {
-  id           String      @id
-  plan         String
-  status       String
-  amount       Float
-  renewalDate  DateTime
-  brandId      String?     @unique(map: "Subscription_brandId_key")
-  influencerId Int?        @unique(map: "Subscription_influencerId_key")
-  brand        brand?      @relation(fields: [brandId], references: [id], map: "Subscription_brandId_fkey")
-  influencer   influencer? @relation(fields: [influencerId], references: [id], map: "Subscription_influencerId_fkey")
-}
-
-model supportticket {
-  id           String        @id
-  subject      String
-  status       String
-  createdAt    DateTime      @default(now())
-  influencerId Int?
-  brandId      String?
-  chatmessage  chatmessage[]
-  brand        brand?        @relation(fields: [brandId], references: [id], map: "SupportTicket_brandId_fkey")
-  influencer   influencer?   @relation(fields: [influencerId], references: [id], map: "SupportTicket_influencerId_fkey")
-
-  @@index([brandId], map: "SupportTicket_brandId_fkey")
-  @@index([influencerId], map: "SupportTicket_influencerId_fkey")
-}
-
-model user {
-  id             String      @id
-  email          String      @unique(map: "User_email_key")
-  passwordHash   String
-  role           user_role
-  createdAt      DateTime    @default(now())
-  emailVerified  Boolean     @default(false)
-  emailOtp       String?
-  emailOtpExpiry DateTime?
-  adminuser      adminuser?
-  brand          brand?
-  influencer     influencer?
-}
+/* ================= ENUMS ================= */
 
 enum user_role {
   ADMIN
@@ -147,4 +18,159 @@ enum user_role {
 enum campaign_status {
   DRAFT
   PUBLISHED
+}
+
+/* ================= USER ================= */
+
+model User {
+  id             String @id @default(cuid()) @db.VarChar(191)
+  email          String      @unique @db.VarChar(191)
+  passwordHash   String      @db.VarChar(191)
+  role           user_role
+  emailVerified  Boolean     @default(false)
+  emailOtp       String?     @db.VarChar(191)
+  emailOtpExpiry DateTime?
+  createdAt      DateTime    @default(now())
+
+  adminUser      AdminUser?
+  brand          Brand?
+  influencer     Influencer?
+}
+
+/* ================= ADMIN ================= */
+
+model AdminUser {
+  id      String @id @db.VarChar(191)
+  userId  String @unique @db.VarChar(191)
+
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ================= BRAND ================= */
+
+model Brand {
+  id            String   @id @db.VarChar(191)
+  userId        String   @unique @db.VarChar(191)
+  name          String
+  industry      String?
+  totalSpend    Float    @default(0)
+  avatarInitial String?
+  email         String?
+  phone         String?
+  website       String?
+  description   String?
+  addressLine1  String?
+  city          String?
+  state         String?
+  country       String?
+  postalCode    String?
+  instagramUrl  String?
+  facebookUrl   String?
+  threadsUrl    String?
+  twitterUrl    String?
+  linkedinUrl   String?
+  youtubeUrl    String?
+  logoUrl       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaigns      Campaign[]
+  subscription   Subscription?
+  supportTickets SupportTicket[]
+}
+
+/* ================= INFLUENCER ================= */
+
+model Influencer {
+  id             Int      @id @default(autoincrement())
+  userId         String   @unique @db.VarChar(191)
+  platform       String
+  username       String   @unique
+  followers      Int      @default(0)
+  mediaCount     Int      @default(0)
+  engagementRate Float?
+  connected      Boolean  @default(false)
+
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications   Application[]
+  subscription   Subscription?
+  supportTickets SupportTicket[]
+}
+
+/* ================= CAMPAIGN ================= */
+
+model Campaign {
+  id           String          @id @db.VarChar(191)
+  brandId      String          @db.VarChar(191)
+  title        String
+  description  String
+  niche        String
+  budgetRange  String
+  platforms    String          @db.Text
+  deliverables String
+  deadline     DateTime
+  status       campaign_status
+  createdAt    DateTime        @default(now())
+
+  brand         Brand         @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  applications Application[]
+}
+
+/* ================= APPLICATION ================= */
+
+model Application {
+  id           String     @id @db.VarChar(191)
+  influencerId Int
+  campaignId   String     @db.VarChar(191)
+  status       String
+  createdAt    DateTime   @default(now())
+
+  influencer   Influencer @relation(fields: [influencerId], references: [id], onDelete: Cascade)
+  campaign     Campaign   @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([influencerId])
+}
+
+/* ================= SUBSCRIPTION ================= */
+
+model Subscription {
+  id           String      @id @db.VarChar(191)
+  plan         String
+  status       String
+  amount       Float
+  renewalDate  DateTime
+
+  brandId      String?     @unique @db.VarChar(191)
+  influencerId Int?        @unique
+
+  brand        Brand?      @relation(fields: [brandId], references: [id])
+  influencer   Influencer? @relation(fields: [influencerId], references: [id])
+}
+
+/* ================= SUPPORT ================= */
+
+model SupportTicket {
+  id           String        @id @db.VarChar(191)
+  subject      String
+  status       String
+  createdAt    DateTime      @default(now())
+
+  brandId      String?       @db.VarChar(191)
+  influencerId Int?
+
+  brand        Brand?        @relation(fields: [brandId], references: [id])
+  influencer   Influencer?   @relation(fields: [influencerId], references: [id])
+  messages     ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @db.VarChar(191)
+  text      String   @db.Text
+  senderId  String   @db.VarChar(191)
+  ticketId  String   @db.VarChar(191)
+  createdAt DateTime @default(now())
+
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }

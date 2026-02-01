@@ -33,15 +33,16 @@ export default async function handler(
 
     // 👤 Create user
     const user = await prisma.user.create({
-      data: {
-        email,
-        passwordHash,
-        role,
-        isVerified: false,
-        emailOtp,
-        emailOtpExpiry,
-      },
-    });
+  data: {
+    email,
+    passwordHash,
+    role: "INFLUENCER",
+    emailVerified: false, // ✅ correct field
+    emailOtp,
+    emailOtpExpiry,
+  }
+});
+
 
     // 🎭 Role-based tables
     if (role === "INFLUENCER") {

@@ -26,13 +26,14 @@ export default async function handler(
   }
 
   await prisma.user.update({
-    where: { email },
-    data: {
-       isVerified: true,
-      emailOtp: null,
-      emailOtpExpiry: null,
-    },
-  });
+  where: { email },
+  data: {
+    emailVerified: true,   // ✅ correct field
+    emailOtp: null,
+    emailOtpExpiry: null,
+  },
+});
+
 
   return res.json({ success: true });
 }

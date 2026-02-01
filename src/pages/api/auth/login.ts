@@ -27,12 +27,13 @@ export default async function handler(
     id: true,
     passwordHash: true,
     role: true,
-    isVerified: true, // ✅ explicit
-    admin: true,
+    emailVerified: true, // ✅ correct field
+    adminUser: true,
     brand: true,
     influencer: true,
   },
 });
+
 
 
     if (!user) {
@@ -45,7 +46,7 @@ export default async function handler(
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
- if (!user.isVerified) {
+ if (!user.emailVerified) {
   return res.status(403).json({
     message: "Please verify your email first",
   });

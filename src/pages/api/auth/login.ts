@@ -52,9 +52,6 @@ export default async function handler(
   });
 }
 
-
-
-
     const token = jwt.sign(
   {
     userId: user.id,

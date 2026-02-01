@@ -66,6 +66,7 @@ model Campaign {
   deadline     DateTime
   status       CampaignStatus @default(DRAFT)
   brandId      String
+  createdAt    DateTime        @default(now())
   brand        Brand    @relation(fields: [brandId], references: [id])
 
   applications Application[]

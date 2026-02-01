@@ -25,10 +25,10 @@ export default async function handler(
 
     const brands = await prisma.brand.findMany({
       include: {
-        campaign: {
-          select: { id: true },
-        },
-      },
+  campaign: {
+    select: { id: true },
+  },
+},
       orderBy: {
         name: "asc", // ✅ VALID FIELD
       },
@@ -46,7 +46,7 @@ export default async function handler(
           .slice(0, 2)
           .toUpperCase(),
       industry: b.industry,
-      campaigns: b.campaigns.length,
+      campaigns: b.campaign.length,
       applications: 0,
       engagement: 0,
       totalSpend: `$${b.totalSpend ?? 0}`,

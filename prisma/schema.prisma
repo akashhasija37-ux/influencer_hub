@@ -24,36 +24,36 @@ enum campaign_status {
 
 model User {
   id             String @id @default(cuid()) @db.VarChar(191)
-  email          String      @unique @db.VarChar(191)
-  passwordHash   String      @db.VarChar(191)
+  email          String @unique @db.VarChar(191)
+  passwordHash   String @db.VarChar(191)
   role           user_role
-  emailVerified  Boolean     @default(false)
-  emailOtp       String?     @db.VarChar(191)
+  emailVerified  Boolean @default(false)
+  emailOtp       String? @db.VarChar(191)
   emailOtpExpiry DateTime?
-  createdAt      DateTime    @default(now())
+  createdAt      DateTime @default(now())
 
-  adminUser      AdminUser?
-  brand          Brand?
-  influencer     Influencer?
+  adminUser  AdminUser?
+  brand      Brand?
+  influencer Influencer?
 }
 
 /* ================= ADMIN ================= */
 
 model AdminUser {
-  id      String @id @db.VarChar(191)
-  userId  String @unique @db.VarChar(191)
+  id     String @id @default(cuid()) @db.VarChar(191)
+  userId String @unique @db.VarChar(191)
 
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /* ================= BRAND ================= */
 
 model Brand {
-  id            String   @id @db.VarChar(191)
-  userId        String   @unique @db.VarChar(191)
+  id            String @id @default(cuid()) @db.VarChar(191)
+  userId        String @unique @db.VarChar(191)
   name          String
   industry      String?
-  totalSpend    Float    @default(0)
+  totalSpend    Float @default(0)
   avatarInitial String?
   email         String?
   phone         String?
@@ -74,7 +74,7 @@ model Brand {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User @relation(fields: [userId], references: [id], onDelete: Cascade)
   campaigns      Campaign[]
   subscription   Subscription?
   supportTickets SupportTicket[]
@@ -83,16 +83,16 @@ model Brand {
 /* ================= INFLUENCER ================= */
 
 model Influencer {
-  id             Int      @id @default(autoincrement())
-  userId         String   @unique @db.VarChar(191)
+  id             Int @id @default(autoincrement())
+  userId         String @unique @db.VarChar(191)
   platform       String
-  username       String   @unique
-  followers      Int      @default(0)
-  mediaCount     Int      @default(0)
+  username       String @unique
+  followers      Int @default(0)
+  mediaCount     Int @default(0)
   engagementRate Float?
-  connected      Boolean  @default(false)
+  connected      Boolean @default(false)
 
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User @relation(fields: [userId], references: [id], onDelete: Cascade)
   applications   Application[]
   subscription   Subscription?
   supportTickets SupportTicket[]
@@ -101,33 +101,33 @@ model Influencer {
 /* ================= CAMPAIGN ================= */
 
 model Campaign {
-  id           String          @id @db.VarChar(191)
-  brandId      String          @db.VarChar(191)
+  id           String @id @default(cuid()) @db.VarChar(191)
+  brandId      String @db.VarChar(191)
   title        String
   description  String
   niche        String
   budgetRange  String
-  platforms    String          @db.Text
+  platforms    String @db.Text
   deliverables String
   deadline     DateTime
   status       campaign_status
-  createdAt    DateTime        @default(now())
+  createdAt    DateTime @default(now())
 
-  brand         Brand         @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brand         Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
   applications Application[]
 }
 
 /* ================= APPLICATION ================= */
 
 model Application {
-  id           String     @id @db.VarChar(191)
+  id           String @id @default(cuid()) @db.VarChar(191)
   influencerId Int
-  campaignId   String     @db.VarChar(191)
+  campaignId   String @db.VarChar(191)
   status       String
-  createdAt    DateTime   @default(now())
+  createdAt    DateTime @default(now())
 
-  influencer   Influencer @relation(fields: [influencerId], references: [id], onDelete: Cascade)
-  campaign     Campaign   @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  influencer Influencer @relation(fields: [influencerId], references: [id], onDelete: Cascade)
+  campaign   Campaign   @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 
   @@index([campaignId])
   @@index([influencerId])
@@ -136,41 +136,41 @@ model Application {
 /* ================= SUBSCRIPTION ================= */
 
 model Subscription {
-  id           String      @id @db.VarChar(191)
+  id           String @id @default(cuid()) @db.VarChar(191)
   plan         String
   status       String
   amount       Float
   renewalDate  DateTime
 
-  brandId      String?     @unique @db.VarChar(191)
-  influencerId Int?        @unique
+  brandId      String? @unique @db.VarChar(191)
+  influencerId Int?    @unique
 
-  brand        Brand?      @relation(fields: [brandId], references: [id])
-  influencer   Influencer? @relation(fields: [influencerId], references: [id])
+  brand      Brand?      @relation(fields: [brandId], references: [id])
+  influencer Influencer? @relation(fields: [influencerId], references: [id])
 }
 
 /* ================= SUPPORT ================= */
 
 model SupportTicket {
-  id           String        @id @db.VarChar(191)
+  id           String @id @default(cuid()) @db.VarChar(191)
   subject      String
   status       String
-  createdAt    DateTime      @default(now())
+  createdAt    DateTime @default(now())
 
-  brandId      String?       @db.VarChar(191)
+  brandId      String? @db.VarChar(191)
   influencerId Int?
 
-  brand        Brand?        @relation(fields: [brandId], references: [id])
-  influencer   Influencer?   @relation(fields: [influencerId], references: [id])
-  messages     ChatMessage[]
+  brand      Brand?      @relation(fields: [brandId], references: [id])
+  influencer Influencer? @relation(fields: [influencerId], references: [id])
+  messages   ChatMessage[]
 }
 
 model ChatMessage {
-  id        String   @id @db.VarChar(191)
-  text      String   @db.Text
-  senderId  String   @db.VarChar(191)
-  ticketId  String   @db.VarChar(191)
+  id        String @id @default(cuid()) @db.VarChar(191)
+  text      String @db.Text
+  senderId  String @db.VarChar(191)
+  ticketId  String @db.VarChar(191)
   createdAt DateTime @default(now())
 
-  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }

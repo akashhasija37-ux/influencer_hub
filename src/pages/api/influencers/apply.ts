@@ -34,6 +34,8 @@ export default async function handler(
 
     const { campaignId, platform, username } = req.body;
 
+    console.log(platform,'999999999')
+
     if (!campaignId || !platform || !username) {
       return res.status(400).json({ message: "Missing fields" });
     }
@@ -60,7 +62,8 @@ export default async function handler(
     const posts = profileData.posts || 0;
 
     const engagementRate =
-      posts > 0 ? ((followers / posts) * 0.01).toFixed(2) : "0";
+  followers > 0 ? Number(((posts / followers) * 100).toFixed(2)) : 0;
+
 
     const avatarUrl = profileData.profile_pic_url || null;
     const fullName = profileData.full_name || username;
@@ -72,7 +75,7 @@ const influencer = await prisma.influencer.upsert({
     userId: decoded.userId,
   },
   update: {
-    platform: platform.toLowerCase(),        // ✅ REQUIRED
+    platform,
     username,
     followers,
     mediaCount: posts,
@@ -81,7 +84,7 @@ const influencer = await prisma.influencer.upsert({
   },
   create: {
     userId: decoded.userId,
-    platform: platform.toLowerCase(),         // ✅ REQUIRED
+    platform,        // ✅ REQUIRED
     username,
     followers,
     mediaCount: posts,

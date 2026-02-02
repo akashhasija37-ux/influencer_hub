@@ -37,6 +37,19 @@ model User {
   influencer Influencer?
 }
 
+model Activity {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // CAMPAIGN_CREATED, MESSAGE_SENT, etc
+  title       String
+  description String
+  category    String   // Campaign, Message, Social Media, Application
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+
 /* ================= ADMIN ================= */
 
 model AdminUser {

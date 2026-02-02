@@ -28,10 +28,10 @@ export default async function handler(
         AND: [
           search
             ? {
-                OR: [
-                  { name: { contains: String(search), mode: "insensitive" } },
-                  { username: { contains: String(search), mode: "insensitive" } },
-                ],
+                username: {
+      contains: String(search),
+      mode: "insensitive",
+    },
               }
             : {},
 

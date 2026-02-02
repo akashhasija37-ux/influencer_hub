@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma";
+import { prisma, Prisma } from "@prisma/client";
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,54 +13,63 @@ export default async function handler(
     const {
       search,
       platform,
-      niche,
       minFollowers,
       minEngagement,
-      country,
       page = "1",
       limit = "10",
     } = req.query;
 
+    // ✅ STRICTLY TYPED WHERE
+    const where: Prisma.InfluencerWhereInput = {
+      connected: true,
+      AND: [],
+    };
+
+    // ✅ SEARCH (USERNAME ONLY)
+    if (search) {
+      where.AND!.push({
+        username: {
+          contains: String(search),
+          mode: "insensitive",
+        },
+      });
+    }
+
+    // ✅ PLATFORM
+    if (platform) {
+      where.AND!.push({
+        platform: String(platform).toUpperCase() as any,
+      });
+    }
+
+    // ✅ FOLLOWERS
+    if (minFollowers) {
+      where.AND!.push({
+        followers: {
+          gte: Number(minFollowers),
+        },
+      });
+    }
+
+    // ✅ ENGAGEMENT
+    if (minEngagement) {
+      where.AND!.push({
+        engagementRate: {
+          gte: Number(minEngagement),
+        },
+      });
+    }
+
     const influencers = await prisma.influencer.findMany({
-      where: {
-        connected: true,
-
-        AND: [
-          search
-            ? {
-                username: {
-      contains: String(search),
-      mode: "insensitive",
-    },
-              }
-            : {},
-
-          platform ? { platform: String(platform).toUpperCase() as any } : {},
-
-         
-       
-
-          minFollowers
-            ? { followers: { gte: Number(minFollowers) } }
-            : {},
-
-          minEngagement
-            ? { engagementRate: { gte: Number(minEngagement) } }
-            : {},
-
-          
-        ],
-      },
-
+      where,
       skip: (Number(page) - 1) * Number(limit),
       take: Number(limit),
-
       orderBy: {
         followers: "desc",
       },
     });
 
-    const total = await prisma.influencer.count();
+    const total = await prisma.influencer.count({ where });
 
     res.status(200).json({
       data: influencers,
@@ -71,7 +80,7 @@ export default async function handler(
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("INFLUENCER FETCH ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 }

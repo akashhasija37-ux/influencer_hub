@@ -35,6 +35,8 @@ model User {
   adminUser  AdminUser?
   brand      Brand?
   influencer Influencer?
+
+  activities    Activity[]
 }
 
 model Activity {

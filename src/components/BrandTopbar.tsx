@@ -10,19 +10,28 @@ import {
 
 export default function BrandTopbar() {
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
+ const dropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useRouter();
 
   // Close dropdown on outside click
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpen(false);
-      }
+ useEffect(() => {
+  function handleClickOutside(event: MouseEvent) {
+    if (
+      dropdownRef.current &&
+      event.target instanceof Node &&
+      !dropdownRef.current.contains(event.target)
+    ) {
+      setOpen(false);
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
 
   const handleLogout = () => {
     localStorage.removeItem("auth_token");

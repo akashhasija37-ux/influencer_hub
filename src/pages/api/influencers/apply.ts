@@ -43,6 +43,8 @@ export default async function handler(
     /* ================= 1. CALL SEARCHAPI ================= */
     let profileData: any = null;
 
+    let topPost: string | null = null;
+
     if (platform === "INSTAGRAM") {
       const apiRes = await fetch(
         `https://www.searchapi.io/api/v1/search?engine=instagram_profile&username=${username}&api_key=${SEARCH_API_KEY}`
@@ -50,7 +52,16 @@ export default async function handler(
 
       const apiJson = await apiRes.json();
       profileData = apiJson?.profile;
+
+      if (apiJson?.posts && apiJson.posts.length > 0) {
+    topPost =
+      apiJson.posts[0].thumbnail ||
+      apiJson.posts[0].link ||
+      null;
+  }
     }
+
+    
 
     if (!profileData) {
       return res.status(400).json({ message: "Failed to fetch profile data" });
@@ -65,8 +76,8 @@ export default async function handler(
   followers > 0 ? Number(((posts / followers) * 100).toFixed(2)) : 0;
 
 
-    const avatarUrl = profileData.profile_pic_url || null;
-    const fullName = profileData.full_name || username;
+   const avatarUrl = profileData.avatar_hd || profileData.avatar || null;
+const fullName = profileData.name || username;
 
     /* ================= 3. UPSERT INFLUENCER ================= */
     /* ================= 3. UPSERT INFLUENCER ================= */
@@ -77,6 +88,9 @@ const influencer = await prisma.influencer.upsert({
   update: {
     platform,
     username,
+    name,        // ⭐ NEW
+    avatar: avatarUrl, // ⭐ NEW
+    topPost,         //
     followers,
     mediaCount: posts,
     engagementRate: Number(engagementRate),
@@ -86,6 +100,9 @@ const influencer = await prisma.influencer.upsert({
     userId: decoded.userId,
     platform,        // ✅ REQUIRED
     username,
+    name,        // ⭐ NEW
+    avatar: avatarUrl, // ⭐ NEW
+    topPost, 
     followers,
     mediaCount: posts,
     engagementRate: Number(engagementRate),

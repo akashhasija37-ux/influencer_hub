@@ -106,6 +106,9 @@ model Influencer {
   mediaCount     Int @default(0)
   engagementRate Float?
   connected      Boolean @default(false)
+  name           String?
+  avatar         String?
+  topPost        String?
 
   user           User @relation(fields: [userId], references: [id], onDelete: Cascade)
   applications   Application[]

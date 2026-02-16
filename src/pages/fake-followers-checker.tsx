@@ -99,11 +99,11 @@ export default function FakeFollowersChecker() {
           {/* Navigation */}
           <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
             {[
-    { label: "About Us", key: "about" },
+    { label: "About Us", key: "about-us", route:'/about-us' },
     { label: "Followers Check", key: "fake-followers-checker", route:'/fake-followers-checker' },
     { label: "Search Influencer", key: "for-creators", route: "/for-creators" },
     { label: "Brand Jobs", key: "brand-jobs", route: "/brands-job" },
-    { label: "Blogs", key: "blogs" },
+    { label: "Blogs", key: "blog", route:'/blog' },
   ].map(item => (
     <button
       key={item.key}

@@ -24,6 +24,7 @@ import {
   Instagram,
   ArrowRight, User, LogOut,
 } from 'lucide-react';
+import Header from "@/components/Header";
 
 type BlogPost = {
   title: string;
@@ -85,174 +86,174 @@ export default function BlogIndexPage() {
       role: "ADMIN" | "BRAND" | "INFLUENCER";
     };
     
-    const Header = ({ onNavigate }: { onNavigate: (key: string) => void }) => {
-      const [isDarkMode, setIsDarkMode] = useState(true);
-      const [user, setUser] = useState<AuthUser | null>(null);
-      const [open, setOpen] = useState(false);
-      const router = useRouter();
+    // const Header = ({ onNavigate }: { onNavigate: (key: string) => void }) => {
+    //   const [isDarkMode, setIsDarkMode] = useState(true);
+    //   const [user, setUser] = useState<AuthUser | null>(null);
+    //   const [open, setOpen] = useState(false);
+    //   const router = useRouter();
     
-      // 🔐 Check auth state (homepage-safe)
-    
-    
-    useEffect(() => {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "dark") {
-        document.documentElement.classList.add("dark");
-        setIsDarkMode(true);
-      } else {
-        document.documentElement.classList.remove("dark");
-        setIsDarkMode(false);
-      }
-    }, []);
-    
-    const toggleTheme = () => {
-      const html = document.documentElement;
-    
-      if (html.classList.contains("dark")) {
-        html.classList.remove("dark");
-        localStorage.setItem("theme", "light");
-        setIsDarkMode(false);
-      } else {
-        html.classList.add("dark");
-        localStorage.setItem("theme", "dark");
-        setIsDarkMode(true);
-      }
-    };
+    //   // 🔐 Check auth state (homepage-safe)
     
     
+    // useEffect(() => {
+    //   const savedTheme = localStorage.getItem("theme");
+    //   if (savedTheme === "dark") {
+    //     document.documentElement.classList.add("dark");
+    //     setIsDarkMode(true);
+    //   } else {
+    //     document.documentElement.classList.remove("dark");
+    //     setIsDarkMode(false);
+    //   }
+    // }, []);
     
-     useEffect(() => {
-      fetch("/api/auth/me", {
-        credentials: "include",
-      })
-        .then(res => (res.ok ? res.json() : { user: null }))
-        .then(data => setUser(data.user))
-        .catch(() => setUser(null));
-    }, [router.asPath]);
+    // const toggleTheme = () => {
+    //   const html = document.documentElement;
+    
+    //   if (html.classList.contains("dark")) {
+    //     html.classList.remove("dark");
+    //     localStorage.setItem("theme", "light");
+    //     setIsDarkMode(false);
+    //   } else {
+    //     html.classList.add("dark");
+    //     localStorage.setItem("theme", "dark");
+    //     setIsDarkMode(true);
+    //   }
+    // };
     
     
-      const logout = async () => {
-       await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-        setUser(null);
-        router.push("/login");
-      };
     
-      return (
-        <header className="sticky top-0 z-50 bg-black text-white shadow-lg border-b border-gray-800">
-          <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-            {/* Logo */}
-            <div
-              className="flex items-center space-x-2 cursor-pointer"
-              onClick={() => router.push("/")}
-            >
-              <Target className="w-6 h-6 text-purple-500" />
-              <span className="text-xl font-bold">InfluenceHub</span>
-            </div>
+    //  useEffect(() => {
+    //   fetch("/api/auth/me", {
+    //     credentials: "include",
+    //   })
+    //     .then(res => (res.ok ? res.json() : { user: null }))
+    //     .then(data => setUser(data.user))
+    //     .catch(() => setUser(null));
+    // }, [router.asPath]);
     
-            {/* Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
-              {[
-      { label: "About Us", key: "about" },
-      { label: "Followers Check", key: "analytics" },
-      { label: "Search Influencer", key: "for-creators", route: "/for-creators" },
-      { label: "Brand Jobs", key: "brand-jobs", route: "/brands-job" },
-      { label: "Blogs", key: "blogs" },
-    ].map(item => (
-      <button
-        key={item.key}
-        onClick={() => {
-          if (item.route) {
-            router.push(item.route);
-          } else {
-            onNavigate(item.key);
-          }
-        }}
-        className="hover:text-purple-400 transition"
-      >
-        {item.label}
-      </button>
-    ))}
     
-            </nav>
+    //   const logout = async () => {
+    //    await fetch("/api/auth/logout", {
+    //   method: "POST",
+    //   credentials: "include",
+    // });
+    //     setUser(null);
+    //     router.push("/login");
+    //   };
     
-            {/* Right Side */}
-            <div className="flex items-center space-x-4">
-              {/* Dark Mode */}
-        <button
-      className="p-2 rounded-full transition 
-                 text-gray-700 dark:text-purple-400 
-                 hover:bg-gray-200 dark:hover:bg-gray-800"
-      onClick={toggleTheme}
-    >
-      {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-    </button>
+    //   return (
+    //     <header className="sticky top-0 z-50 bg-black text-white shadow-lg border-b border-gray-800">
+    //       <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+    //         {/* Logo */}
+    //         <div
+    //           className="flex items-center space-x-2 cursor-pointer"
+    //           onClick={() => router.push("/")}
+    //         >
+    //           <Target className="w-6 h-6 text-purple-500" />
+    //           <span className="text-xl font-bold">InfluenceHub</span>
+    //         </div>
     
-              {/* AUTH UI */}
-              {!user ? (
-      <>
-        <button
-          onClick={() => router.push("/login")}
-          className="text-sm font-medium hover:text-purple-400 transition"
-        >
-          Login
-        </button>
-        <button
-          onClick={() => router.push("/register")}
-          className="px-4 py-2 bg-purple-600 rounded-lg text-sm font-medium hover:bg-purple-700 transition"
-        >
-          Get Started
-        </button>
-      </>
-    ) : (
-      <div className="relative">
-        <button
-          onClick={() => setOpen(!open)}
-          className="flex items-center gap-2"
-        >
-          <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-            <User size={16} />
-          </div>
-          <span className="text-sm">{user.name}</span>
-        </button>
+    //         {/* Navigation */}
+    //         <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
+    //           {[
+    //   { label: "About Us", key: "about" },
+    //   { label: "Followers Check", key: "analytics" },
+    //   { label: "Search Influencer", key: "for-creators", route: "/for-creators" },
+    //   { label: "Brand Jobs", key: "brand-jobs", route: "/brands-job" },
+    //   { label: "Blogs", key: "blogs" },
+    // ].map(item => (
+    //   <button
+    //     key={item.key}
+    //     onClick={() => {
+    //       if (item.route) {
+    //         router.push(item.route);
+    //       } else {
+    //         onNavigate(item.key);
+    //       }
+    //     }}
+    //     className="hover:text-purple-400 transition"
+    //   >
+    //     {item.label}
+    //   </button>
+    // ))}
     
-        {open && (
-          <div className="absolute right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg w-44 z-50">
-            <div className="px-4 py-2 text-xs text-gray-400">
-              {user.role}
-            </div>
+    //         </nav>
     
-            <button
-              onClick={() => {
-                setOpen(false);
-                router.push("/settings");
-              }}
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-800"
-            >
-              Profile
-            </button>
+    //         {/* Right Side */}
+    //         <div className="flex items-center space-x-4">
+    //           {/* Dark Mode */}
+    //     <button
+    //   className="p-2 rounded-full transition 
+    //              text-gray-700 dark:text-purple-400 
+    //              hover:bg-gray-200 dark:hover:bg-gray-800"
+    //   onClick={toggleTheme}
+    // >
+    //   {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+    // </button>
     
-            <button
-              onClick={() => {
-                setOpen(false);
-                logout();
-              }}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-800"
-            >
-              <LogOut size={14} /> Logout
-            </button>
-          </div>
-        )}
-      </div>
-    )}
+    //           {/* AUTH UI */}
+    //           {!user ? (
+    //   <>
+    //     <button
+    //       onClick={() => router.push("/login")}
+    //       className="text-sm font-medium hover:text-purple-400 transition"
+    //     >
+    //       Login
+    //     </button>
+    //     <button
+    //       onClick={() => router.push("/register")}
+    //       className="px-4 py-2 bg-purple-600 rounded-lg text-sm font-medium hover:bg-purple-700 transition"
+    //     >
+    //       Get Started
+    //     </button>
+    //   </>
+    // ) : (
+    //   <div className="relative">
+    //     <button
+    //       onClick={() => setOpen(!open)}
+    //       className="flex items-center gap-2"
+    //     >
+    //       <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+    //         <User size={16} />
+    //       </div>
+    //       <span className="text-sm">{user.name}</span>
+    //     </button>
     
-            </div>
-          </div>
-        </header>
-      );
-    };
+    //     {open && (
+    //       <div className="absolute right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg w-44 z-50">
+    //         <div className="px-4 py-2 text-xs text-gray-400">
+    //           {user.role}
+    //         </div>
+    
+    //         <button
+    //           onClick={() => {
+    //             setOpen(false);
+    //             router.push("/settings");
+    //           }}
+    //           className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-800"
+    //         >
+    //           Profile
+    //         </button>
+    
+    //         <button
+    //           onClick={() => {
+    //             setOpen(false);
+    //             logout();
+    //           }}
+    //           className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-800"
+    //         >
+    //           <LogOut size={14} /> Logout
+    //         </button>
+    //       </div>
+    //     )}
+    //   </div>
+    // )}
+    
+    //         </div>
+    //       </div>
+    //     </header>
+    //   );
+    // };
   return (
     <>
       <Head>

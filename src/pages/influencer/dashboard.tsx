@@ -93,7 +93,7 @@ export default function InfluencerDashboard() {
       credentials: "include",
       body: JSON.stringify({
         campaignId: selected?.id,
-        platform: selected?.platforms,
+        platform: selected?.platform,
         username,
       }),
     });
@@ -258,7 +258,7 @@ export default function InfluencerDashboard() {
                     <h3 className="font-semibold">{c.title}</h3>
                     <p className="text-sm text-gray-400">{c.brand.name}</p>
                     <div className="flex justify-between mt-3 text-sm">
-                      <span className="text-purple-400">{c.platforms}</span>
+                      <span className="text-purple-400">{c?.platform}</span>
                       <span>{formatDate(c.deadline)}</span>
                     </div>
                   </div>
@@ -292,7 +292,7 @@ export default function InfluencerDashboard() {
             <>
               <h1 className="text-3xl font-bold mb-6">Profile</h1>
               <div className="bg-gray-900 p-6 rounded-xl border border-gray-800 space-y-2">
-                <p>Platform: {profile.platforms}</p>
+                <p>Platform: {profile.platform}</p>
                 <p>Username: {profile.username}</p>
                 <p>Followers: {profile.followers}</p>
                 <p>Posts: {profile.mediaCount}</p>
@@ -339,7 +339,7 @@ export default function InfluencerDashboard() {
             {step === "CONNECT" && (
               <>
                 <h2 className="text-xl font-bold mb-4">
-                  Connect {selected.platforms}
+                  Connect {selected.platform}
                 </h2>
 
                 <input

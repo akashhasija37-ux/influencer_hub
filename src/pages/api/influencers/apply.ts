@@ -88,7 +88,7 @@ const influencer = await prisma.influencer.upsert({
   update: {
     platform,
     username,
-    name,        // ⭐ NEW
+    name : fullName,        // ⭐ NEW
     avatar: avatarUrl, // ⭐ NEW
     topPost,         //
     followers,
@@ -100,7 +100,7 @@ const influencer = await prisma.influencer.upsert({
     userId: decoded.userId,
     platform,        // ✅ REQUIRED
     username,
-    name,        // ⭐ NEW
+    name : fullName,      // ⭐ NEW
     avatar: avatarUrl, // ⭐ NEW
     topPost, 
     followers,

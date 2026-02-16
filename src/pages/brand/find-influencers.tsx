@@ -160,7 +160,7 @@ export default function FindInfluencersPage() {
               />
               <FilterInput
                 label="Engagement Rate"
-                value={filters.engagementRate}
+                value={filters.engagement}
                 onChange={(v: string) =>
                   setFilters({ ...filters, engagement: v })
                 }

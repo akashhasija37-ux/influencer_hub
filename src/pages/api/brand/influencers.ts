@@ -31,9 +31,9 @@ export default async function handler(
           search
             ? {
                 OR: [
-                  { name: { contains: String(search), mode: "insensitive" } },
-                  { username: { contains: String(search), mode: "insensitive" } },
-                ],
+    { username: { contains: String(search) } },
+    { name: { contains: String(search) } },
+  ],
               }
             : {},
 

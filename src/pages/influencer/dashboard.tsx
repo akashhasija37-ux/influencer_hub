@@ -15,7 +15,7 @@ type Campaign = {
   id: string;
   title: string;
   brand: { name: string };
-  platform: "INSTAGRAM" | "YOUTUBE" | "TIKTOK";
+  platforms: "INSTAGRAM" | "YOUTUBE" | "TIKTOK";
   deadline: string;
   minFollowers: number;
   minEngagement: number;
@@ -62,6 +62,7 @@ export default function InfluencerDashboard() {
     fetch("/api/influencers/campaigns", { credentials: "include" })
       .then(res => res.json())
       .then(setCampaigns);
+      console.log(campaigns)
 
     fetch("/api/influencers/applications", { credentials: "include" })
       .then(res => res.json())
@@ -93,7 +94,7 @@ export default function InfluencerDashboard() {
       credentials: "include",
       body: JSON.stringify({
         campaignId: selected?.id,
-        platform: selected?.platform,
+        platform: selected?.platforms,
         username,
       }),
     });
@@ -245,6 +246,7 @@ export default function InfluencerDashboard() {
           {tab === "CAMPAIGNS" && (
             <>
               <h1 className="text-3xl font-bold mb-6">Active Campaigns</h1>
+              {console.log(campaigns)}
               <div className="grid md:grid-cols-3 gap-6">
                 {campaigns.map(c => (
                   <div
@@ -339,7 +341,7 @@ export default function InfluencerDashboard() {
             {step === "CONNECT" && (
               <>
                 <h2 className="text-xl font-bold mb-4">
-                  Connect {selected.platform}
+                  Connect {selected.platforms}
                 </h2>
 
                 <input

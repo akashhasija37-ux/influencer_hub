@@ -30,27 +30,7 @@ export default function AboutUs() {
       role: "ADMIN" | "BRAND" | "INFLUENCER";
     };
 
-     const aboutRef = useRef<HTMLElement | null>(null);
-      const searchRef = useRef<HTMLElement | null>(null);
-      const jobsRef = useRef<HTMLElement | null>(null);
-      const analyticsRef = useRef<HTMLElement | null>(null);
-      const blogsRef = useRef<HTMLElement | null>(null);
-
-    const scrollToSection = (key: string) => {
-    const map: Record<string, HTMLElement | null> = {
-      about: aboutRef.current,
-      search: searchRef.current,
-      jobs: jobsRef.current,
-      analytics: analyticsRef.current,
-      blogs: blogsRef.current,
-    };
-
-    const el = map[key];
-    if (!el) return;
-
-    const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
-    window.scrollTo({ top: y, behavior: 'smooth' });
-  };
+    
     
     const Header = ({ onNavigate }: { onNavigate: (key: string) => void }) => {
       const [isDarkMode, setIsDarkMode] = useState(true);
@@ -222,6 +202,28 @@ export default function AboutUs() {
         </header>
       );
     };
+
+     const aboutRef = useRef<HTMLElement | null>(null);
+      const searchRef = useRef<HTMLElement | null>(null);
+      const jobsRef = useRef<HTMLElement | null>(null);
+      const analyticsRef = useRef<HTMLElement | null>(null);
+      const blogsRef = useRef<HTMLElement | null>(null);
+
+    const scrollToSection = (key: string) => {
+    const map: Record<string, HTMLElement | null> = {
+      about: aboutRef.current,
+      search: searchRef.current,
+      jobs: jobsRef.current,
+      analytics: analyticsRef.current,
+      blogs: blogsRef.current,
+    };
+
+    const el = map[key];
+    if (!el) return;
+
+    const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  };
 
   return (
     <>

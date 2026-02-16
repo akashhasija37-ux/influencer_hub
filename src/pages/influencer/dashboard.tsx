@@ -258,7 +258,7 @@ export default function InfluencerDashboard() {
                     <h3 className="font-semibold">{c.title}</h3>
                     <p className="text-sm text-gray-400">{c.brand.name}</p>
                     <div className="flex justify-between mt-3 text-sm">
-                      <span className="text-purple-400">{c?.platform}</span>
+                      <span className="text-purple-400">{c?.platforms}</span>
                       <span>{formatDate(c.deadline)}</span>
                     </div>
                   </div>

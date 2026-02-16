@@ -71,10 +71,11 @@ export default function Header({ onNavigate }: HeaderProps) {
   const navItems = [
     { label: "About Us", route: "/about-us" },
     { label: "Followers Check", route: "/fake-followers-checker" },
-    { label: "For Creators", route: "/for-creators" },
-    { label: "For Brands", route: "/for-brands" },
+    { label: "Search Influencer", route: "/for-creators" },
+    { label: "Brand Jobs", route: "/brands-job" },
     { label: "Blogs", route: "/blog" },
   ];
+
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 shadow-sm">

@@ -15,9 +15,15 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/403") ||
     pathname.startsWith("/404") ||
     pathname.startsWith("/api") ||
+    pathname.startsWith("/for-creators") ||
+    pathname.startsWith("/fake-followers-checker") ||
+    pathname.startsWith("/blog") ||
+    pathname.startsWith("/about-us") ||
+    pathname.startsWith("/brands-job") ||
     pathname.startsWith("/_next") ||   // ✅ REQUIRED
     pathname.startsWith("/favicon.ico") ||
     pathname.startsWith("/influencer")
+    
   ) {
     return NextResponse.next();
   }
@@ -61,5 +67,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/brand/:path*", "/dashboard/:path* "],
+  matcher: ["/admin/:path*","/brand/:path*","/dashboard/:path*"],
 };

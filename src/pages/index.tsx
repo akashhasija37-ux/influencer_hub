@@ -55,7 +55,7 @@ const JobCard = ({ job }: any) => (
   <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
     <div className="flex justify-between items-start">
       <h3 className="text-lg font-semibold text-white">{job.title}</h3>
-      <span className="text-xs font-medium bg-purple-600 text-white px-3 py-1 rounded-full">
+      <span className="text-xs font-medium bg-purple-600 text-white px-3 py-1 rounded-full w-[115px]">
         {job.category}
       </span>
     </div>
@@ -142,6 +142,35 @@ const Header = ({ onNavigate }: { onNavigate: (key: string) => void }) => {
   const router = useRouter();
 
   // 🔐 Check auth state (homepage-safe)
+
+
+useEffect(() => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.documentElement.classList.add("dark");
+    setIsDarkMode(true);
+  } else {
+    document.documentElement.classList.remove("dark");
+    setIsDarkMode(false);
+  }
+}, []);
+
+const toggleTheme = () => {
+  const html = document.documentElement;
+
+  if (html.classList.contains("dark")) {
+    html.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+    setIsDarkMode(false);
+  } else {
+    html.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+    setIsDarkMode(true);
+  }
+};
+
+
+
  useEffect(() => {
   fetch("/api/auth/me", {
     credentials: "include",
@@ -176,31 +205,40 @@ const Header = ({ onNavigate }: { onNavigate: (key: string) => void }) => {
         {/* Navigation */}
         <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
           {[
-            { label: "About Us", key: "about" },
-            { label: "Followers Check", key: "analytics" },
-            { label: "Search Influencer", key: "search" },
-            { label: "Brand Jobs", key: "jobs" },
-            { label: "Blogs", key: "blogs" },
-          ].map(item => (
-            <button
-              key={item.key}
-              onClick={() => onNavigate(item.key)}
-              className="hover:text-purple-400 transition"
-            >
-              {item.label}
-            </button>
-          ))}
+  { label: "About Us", key: "about" },
+  { label: "Followers Check", key: "analytics" },
+  { label: "Search Influencer", key: "for-creators", route: "/for-creators" },
+  { label: "Brand Jobs", key: "brand-jobs", route: "/brands-job" },
+  { label: "Blogs", key: "blogs" },
+].map(item => (
+  <button
+    key={item.key}
+    onClick={() => {
+      if (item.route) {
+        router.push(item.route);
+      } else {
+        onNavigate(item.key);
+      }
+    }}
+    className="hover:text-purple-400 transition"
+  >
+    {item.label}
+  </button>
+))}
+
         </nav>
 
         {/* Right Side */}
         <div className="flex items-center space-x-4">
           {/* Dark Mode */}
-          <button
-            className="p-2 rounded-full hover:bg-gray-800 transition text-purple-400"
-            onClick={() => setIsDarkMode(!isDarkMode)}
-          >
-            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
+    <button
+  className="p-2 rounded-full transition 
+             text-gray-700 dark:text-purple-400 
+             hover:bg-gray-200 dark:hover:bg-gray-800"
+  onClick={toggleTheme}
+>
+  {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+</button>
 
           {/* AUTH UI */}
           {!user ? (
@@ -373,13 +411,19 @@ const SearchFilter = ({ onSearch }: { onSearch: (query: string) => void }) => {
         />
       </Head>
 
-      <div className="min-h-screen bg-black text-white font-inter">
+      <div className="min-h-screen 
+                bg-white text-gray-900 
+                dark:bg-black dark:text-white 
+                font-inter transition-colors duration-300">
         <Header onNavigate={scrollToSection} />
 
         {/* 1. HERO */}
         <section
           ref={aboutRef}
-          className="text-center py-20 md:py-32 bg-gray-900 border-b border-gray-800"
+          className="text-center py-20 md:py-32 
+bg-gray-100 text-gray-900 border-b border-gray-200
+dark:bg-gray-900 dark:text-white dark:border-gray-800
+transition-colors duration-300"
         >
          <div className="max-w-4xl mx-auto px-4">
             <div className="inline-flex items-center text-sm font-medium bg-purple-900/50 text-purple-400 px-4 py-1 rounded-full mb-6 border border-purple-800">
@@ -394,14 +438,14 @@ const SearchFilter = ({ onSearch }: { onSearch: (query: string) => void }) => {
             </p>
             <div className="flex justify-center space-x-4">
               <button
-            onClick={() => scrollToSection('analytics')}
+            onClick={() => router.push('/for-creators')}
             className="flex items-center bg-purple-600 text-white text-lg px-8 py-3 rounded-xl font-semibold hover:bg-purple-700 transition"
           >
             <Search className="w-5 h-5 mr-3" /> Search Influencers
           </button>
 
           <button
-            onClick={() => scrollToSection('jobs')}
+            onClick={() => router.push('/brands-job')}
             className="flex items-center bg-gray-800 text-white text-lg px-8 py-3 rounded-xl font-semibold hover:bg-gray-700 transition border border-gray-700"
           >
             <Briefcase className="w-5 h-5 mr-3" /> Post a Job
@@ -450,7 +494,9 @@ const SearchFilter = ({ onSearch }: { onSearch: (query: string) => void }) => {
                       <p className="text-lg text-gray-400 mb-8 max-w-3xl mx-auto">
                         Connect with influencers who match your brand goals. Post your campaign and receive applications from verified creators.
                       </p>
-                      <button className="flex items-center mx-auto bg-purple-600 text-white text-lg px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition shadow-lg">
+                      <button className="flex items-center mx-auto bg-purple-600 text-white text-lg px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition shadow-lg"
+                      onClick={()=>router.push('/brands-job')}
+                      >
                         <PlusSquare className="w-5 h-5 mr-3" /> Post a Job
                       </button>
                       
